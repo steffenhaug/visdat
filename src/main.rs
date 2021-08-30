@@ -92,17 +92,11 @@ unsafe fn mkvao(verts: &Vec<f32>, idx: &Vec<u32>) -> Verts {
 
     /* Define attrib ptrs. */
     gl::EnableVertexAttribArray(0);
-    gl::VertexAttribPointer(
-        0,
-        3,
-        gl::FLOAT,
-        gl::FALSE,
-        0,
-        std::ptr::null()
-    );
+    gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, std::ptr::null());
 
     Verts { vao, vbo, ibo }
 }
+
 
 fn main() {
     // Set up the necessary objects to deal with windows and event handling
@@ -114,7 +108,8 @@ fn main() {
     let cb = glutin::ContextBuilder::new()
         .with_vsync(true);
     let windowed_context = cb.build_windowed(wb, &el).unwrap();
-    // Uncomment these if you want to use the mouse for controls, but want it to be confined to the screen and/or invisible.
+    // Uncomment these if you want to use the mouse for controls, but want it 
+    // to be confined to the screen and/or invisible.
     // windowed_context.window().set_cursor_grab(true).expect("failed to grab cursor");
     // windowed_context.window().set_cursor_visible(false);
 
@@ -130,8 +125,10 @@ fn main() {
 
     // Spawn a separate thread for rendering, so event handling doesn't block rendering
     let render_thread = thread::spawn(move || {
-        // Acquire the OpenGL Context and load the function pointers. This has to be done inside of the rendering thread, because
-        // an active OpenGL context cannot safely traverse a thread boundary
+        // Acquire the OpenGL Context and load the function pointers. This has 
+        // to be done inside of the rendering thread, because an active OpenGL 
+        // context cannot safely traverse a thread boundary.
+
         let context = unsafe {
             let c = windowed_context.make_current().unwrap();
             gl::load_with(|symbol| c.get_proc_address(symbol) as *const _);
@@ -158,12 +155,13 @@ fn main() {
         // == // Set up your VAO here
         let verts = unsafe {
             let vbuf = vec![
-                -0.6, -0.6, 0.0,
-                 0.6, -0.6, 0.0,
-                 0.0,  0.6, 0.0
+                -0.5, -0.5, 0.0,
+                -0.5,  0.5, 0.0,
+                 0.5,  0.5, 0.0,
+                 0.5, -0.5, 0.0
             ];
 
-            let ibuf = vec![ 0, 1, 2 ];
+            let ibuf = vec![ 2, 0, 3 ];
 
             /* drops the buffers, but data should already be in vram i think */
             mkvao(&vbuf, &ibuf)
