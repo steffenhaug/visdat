@@ -173,6 +173,7 @@ fn main() {
 
         // == // Set up your VAO here
         let verts = unsafe {
+            /* a single triangle */
              let triangle = 
                  vec![ -0.9, -0.1, 0.0,
                        -0.9,  0.1, 0.0,
@@ -182,6 +183,7 @@ fn main() {
              let vbuf: Vec<_> = std::iter::repeat(triangle)
                  .take(5)
                  .enumerate()
+                 /* translated copied of the triangle */
                  .map(|(i, verts)| translate([0.4 * (i as f32), 0.0, 0.0], &verts))
                  .flatten()
                  .collect();
@@ -191,6 +193,7 @@ fn main() {
              let ibuf: Vec<_> = std::iter::repeat(vec![ 0, 2, 1 ])
                  .take(5)
                  .enumerate()
+                 /* shift groups of 3 and 3 indeces by different multiples of 3 */
                  .map(|(i, indeces)| {indeces.iter().map(|j| (j + 3*i) as u32).collect::<Vec<u32>>()})
                  .flatten()
                  .collect();
