@@ -59,6 +59,25 @@ struct Verts {
     ibo: u32
 }
 
+/// Translate every vertex (x y z) in a vertex buffer 
+/// by the same vector v. This will fail spectacularly
+/// if the buffer has # of verts not divisible by 3.
+fn translate(v: [f32; 3], verts: &Vec<f32>) -> Vec<f32> {
+    /* group verts into chunks of 3 */
+    let verts = verts.chunks(3);
+    
+    /* add `v` to each chunk */
+    verts
+        .map(move |t| {
+            t.iter()
+             .zip(v)
+             .map(|(x, y)| x + y)
+             .collect::<Vec<_>>()
+        })
+        .flatten()
+        .collect()
+}
+
 unsafe fn mkvao(verts: &Vec<f32>, idx: &Vec<u32>) -> Verts {
     /* Stole my own old code here. I like this way of setting it up. */
 
@@ -154,16 +173,29 @@ fn main() {
 
         // == // Set up your VAO here
         let verts = unsafe {
-            let vbuf = vec![
-                -0.5, -0.5, 0.0,
-                -0.5,  0.5, 0.0,
-                 0.5,  0.5, 0.0,
-                 0.5, -0.5, 0.0
-            ];
+             let triangle = 
+                 vec![ -0.9, -0.1, 0.0,
+                       -0.9,  0.1, 0.0,
+                       -0.7,  0.0, 0.0, ];
+                  
+             /* repeat the triangle 5 times shifted. */
+             let vbuf: Vec<_> = std::iter::repeat(triangle)
+                 .take(5)
+                 .enumerate()
+                 .map(|(i, verts)| translate([0.4 * (i as f32), 0.0, 0.0], &verts))
+                 .flatten()
+                 .collect();
 
-            let ibuf = vec![ 2, 0, 3 ];
 
-            /* drops the buffers, but data should already be in vram i think */
+             /* indeces for the triangles. (in a way that won't get culled) */
+             let ibuf: Vec<_> = std::iter::repeat(vec![ 0, 2, 1 ])
+                 .take(5)
+                 .enumerate()
+                 .map(|(i, indeces)| {indeces.iter().map(|j| (j + 3*i) as u32).collect::<Vec<u32>>()})
+                 .flatten()
+                 .collect();
+
+
             mkvao(&vbuf, &ibuf)
         };
 
@@ -228,7 +260,7 @@ fn main() {
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
                 // Issue the necessary commands to draw your scene here
-                gl::DrawElements(gl::TRIANGLES, 3, gl::UNSIGNED_INT, std::ptr::null());
+                gl::DrawElements(gl::TRIANGLES, 3 * 5, gl::UNSIGNED_INT, std::ptr::null());
 
 
 
