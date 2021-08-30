@@ -14,6 +14,7 @@ const SCREEN_H: u32 = 600;
 
 // == // Helper functions to make interacting with OpenGL a little bit prettier. You *WILL* need these! // == //
 // The names should be pretty self explanatory
+#[inline(always)]
 fn byte_size_of_array<T>(val: &[T]) -> isize {
     std::mem::size_of_val(&val[..]) as isize
 }
@@ -24,6 +25,7 @@ fn pointer_to_array<T>(val: &[T]) -> *const c_void {
 }
 
 // Get the size of the given type in bytes
+#[inline(always)]
 fn size_of<T>() -> i32 {
     mem::size_of::<T>() as i32
 }
@@ -37,9 +39,66 @@ fn offset<T>(n: u32) -> *const c_void {
 // ptr::null()
 
 
-
 // == // Modify and complete the function below for the first task
 // unsafe fn FUNCTION_NAME(ARGUMENT_NAME: &Vec<f32>, ARGUMENT_NAME: &Vec<u32>) -> u32 { } 
+
+struct Verts {
+    vao: u32,
+    vbo: u32,
+    ibo: u32
+}
+
+unsafe fn mkvao(verts: &Vec<f32>, idx: &Vec<u32>) -> Verts {
+    /* Stole my own old code here. I like this way of setting it up. */
+
+    let mut vao = 0;
+    gl::GenVertexArrays(1, &mut vao);
+
+    let mut vbo = 0;
+    gl::GenBuffers(1, &mut vbo);
+
+    let mut ibo = 0;
+    gl::GenBuffers(1, &mut ibo);
+
+    let (vao, vbo, ibo) = (vao, vbo, ibo); /* discard mutability */
+
+
+    gl::BindVertexArray(vao);
+    gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+    gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
+
+    // Potential safety problem here:
+    // The owned vecs need to outlive the VAOs use of them.
+    let vbuf_size = byte_size_of_array(verts);
+    let vbuf_data = verts.as_ptr();
+
+    let ibuf_size = byte_size_of_array(idx);
+    let ibuf_data = idx.as_ptr();
+
+    /* Send data to GPU. */
+    gl::BufferData(gl::ARRAY_BUFFER, 
+                   vbuf_size, 
+                   vbuf_data as *const _, 
+                   gl::STATIC_DRAW);
+
+    gl::BufferData(gl::ELEMENT_ARRAY_BUFFER,
+                   ibuf_size,
+                   ibuf_data as *const _,
+                   gl::STATIC_DRAW);
+
+    /* Define attrib ptrs. */
+    gl::EnableVertexAttribArray(0);
+    gl::VertexAttribPointer(
+        0,
+        3,
+        gl::FLOAT,
+        gl::FALSE,
+        3 * size_of::<f32>(),
+        std::ptr::null()
+    );
+
+    Verts { vao, vbo, ibo }
+}
 
 fn main() {
     // Set up the necessary objects to deal with windows and event handling
@@ -93,9 +152,18 @@ fn main() {
         }
 
         // == // Set up your VAO here
-        unsafe {
+        let verts = unsafe {
+            let vbuf = vec![
+                -0.6, -0.6, 0.0,
+                 0.6, -0.6, 0.0,
+                 0.0,  0.6, 0.0
+            ];
 
-        }
+            let ibuf = vec![ 0, 1, 2 ];
+
+            /* drops the buffers, but data should already be in vram i think */
+            mkvao(&vbuf, &ibuf)
+        };
 
         // Basic usage of shader helper:
         // The example code below returns a shader object, which contains the field `.program_id`.
@@ -106,7 +174,15 @@ fn main() {
         //        .attach_file("./path/to/shader.file")
         //        .link();
         unsafe {
+            let sh = shader::ShaderBuilder::new()
+                .attach_file("./shaders/simple.vert")
+                .attach_file("./shaders/simple.frag")
+                .link();
 
+            sh.activate();
+
+            // should be ok to drop shader. code is already uploaded
+            // and active.
         }
 
         // Used to demonstrate keyboard handling -- feel free to remove
@@ -150,7 +226,7 @@ fn main() {
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
                 // Issue the necessary commands to draw your scene here
-
+                gl::DrawElements(gl::TRIANGLES, 3, gl::UNSIGNED_INT, std::ptr::null());
 
 
 
