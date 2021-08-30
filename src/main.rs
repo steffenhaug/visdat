@@ -6,14 +6,25 @@ use std::sync::{Mutex, Arc, RwLock};
 mod shader;
 mod util;
 
-use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
+use glutin::event::{
+    Event,
+    WindowEvent,
+    DeviceEvent,
+    KeyboardInput,
+    ElementState::{Pressed, Released},
+    VirtualKeyCode::{self, *}
+};
+
 use glutin::event_loop::ControlFlow;
 
 const SCREEN_W: u32 = 800;
 const SCREEN_H: u32 = 600;
 
-// == // Helper functions to make interacting with OpenGL a little bit prettier. You *WILL* need these! // == //
-// The names should be pretty self explanatory
+// Helper functions to make interacting with OpenGL a little bit 
+// prettier. You *WILL* need these! The names should be pretty self 
+// explanatory.
+
+// Get # of bytes in an array.
 #[inline(always)]
 fn byte_size_of_array<T>(val: &[T]) -> isize {
     std::mem::size_of_val(&val[..]) as isize
@@ -53,33 +64,26 @@ unsafe fn mkvao(verts: &Vec<f32>, idx: &Vec<u32>) -> Verts {
 
     let mut vao = 0;
     gl::GenVertexArrays(1, &mut vao);
+    gl::BindVertexArray(vao);
 
     let mut vbo = 0;
     gl::GenBuffers(1, &mut vbo);
+    gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
 
     let mut ibo = 0;
     gl::GenBuffers(1, &mut ibo);
-
-    let (vao, vbo, ibo) = (vao, vbo, ibo); /* discard mutability */
-
-
-    gl::BindVertexArray(vao);
-    gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
     gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
 
-    // Potential safety problem here:
-    // The owned vecs need to outlive the VAOs use of them.
     let vbuf_size = byte_size_of_array(verts);
-    let vbuf_data = verts.as_ptr();
+    let vbuf_data = pointer_to_array(verts);
 
     let ibuf_size = byte_size_of_array(idx);
-    let ibuf_data = idx.as_ptr();
+    let ibuf_data = pointer_to_array(idx);
 
-    /* Send data to GPU. */
     gl::BufferData(gl::ARRAY_BUFFER, 
-                   vbuf_size, 
-                   vbuf_data as *const _, 
-                   gl::STATIC_DRAW);
+                   vbuf_size,
+                   vbuf_data as *const _,
+                   gl::STATIC_DRAW); 
 
     gl::BufferData(gl::ELEMENT_ARRAY_BUFFER,
                    ibuf_size,
@@ -93,7 +97,7 @@ unsafe fn mkvao(verts: &Vec<f32>, idx: &Vec<u32>) -> Verts {
         3,
         gl::FLOAT,
         gl::FALSE,
-        3 * size_of::<f32>(),
+        0,
         std::ptr::null()
     );
 
