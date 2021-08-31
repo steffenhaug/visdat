@@ -60,3 +60,45 @@ Mirroring the scene is accomplished by mirroring the coordinates in the shader b
 ![Changed colour](./images/changes_colour)
 
 Colouring the triangle was accomplished by forwarding the position vector from the vertex shader to the fragment shader, and passing the coordinates as colour values.
+
+## 3d bonus tasks
+
+1. *Using gl_FragCoord to create checkerboard*
+2. *Draw a circle*
+3. *Draw a spiral*
+4. *Draw a shape and have its colour change over time.*
+5. Manually rasterised triangle, using the following shader. Three functions describing the shape are using to deside what to draw.
+
+```glsl
+#version 430 core
+
+in vec2 v_position;
+out vec4 color;
+
+// Functions describing triangle
+float line_1(float x) { return -1.6 * x + 0.5; }
+float line_2(float x) { return  1.6 * x + 0.5; }
+float line_3(float x) { return  0.0 * x - 0.35; }
+
+// Colour of the triangle
+vec3 tricol = vec3(0.2, 0.4, 0.7);
+
+void main()
+{
+    // Calculate the boolean draw
+    float draw = float(
+        line_1(v_position.x) >= v_position.y
+        && line_2(v_position.x) >= v_position.y
+        && line_3(v_position.x) <= v_position.y
+    );
+    // Use draw to set one of the colours to 0 and select the other
+    color = vec4(
+        max(draw * tricol.x, float(!bool(draw))*-(-2+v_position.x+v_position.y)/2),
+        max(draw * tricol.y, float(!bool(draw))*v_position.x),
+        max(draw * tricol.z, float(!bool(draw))*v_position.y),
+        1.0f
+    );
+}
+```
+
+![Manually rasterised triangle](./images/manually_rasterised.png)
