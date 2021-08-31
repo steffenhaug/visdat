@@ -5,5 +5,9 @@ out vec4 color;
 
 void main()
 {
-    color = vec4(v_position, 1.0f, 1.0f);
+    if (abs(v_position.y - 0.5 * sin(5.0 * v_position.x)) < .02) {
+        color = vec4(v_position, 1.0f, 1.0f);
+    } else {
+        color = vec4(0);
+    }
 }

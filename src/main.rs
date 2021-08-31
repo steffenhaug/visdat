@@ -155,13 +155,14 @@ fn main() {
         // == // Set up your VAO here
         let verts = unsafe {
             let vbuf = vec![
-                -0.5, -0.5, 0.0,
-                -0.5,  0.5, 0.0,
-                 0.5,  0.5, 0.0,
-                 0.5, -0.5, 0.0
+                -1.0, -1.0, 0.0,
+                 1.0, -1.0, 0.0,
+                 1.0,  1.0, 0.0,
+                -1.0,  1.0, 0.0
             ];
 
-            let ibuf = vec![ 2, 0, 3 ];
+            let ibuf = vec![ 0, 1, 2,
+                             0, 2, 3 ];
 
             /* drops the buffers, but data should already be in vram i think */
             mkvao(&vbuf, &ibuf)
@@ -228,7 +229,7 @@ fn main() {
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
                 // Issue the necessary commands to draw your scene here
-                gl::DrawElements(gl::TRIANGLES, 3, gl::UNSIGNED_INT, std::ptr::null());
+                gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, std::ptr::null());
 
 
 
