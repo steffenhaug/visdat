@@ -61,7 +61,7 @@ Mirroring the scene is accomplished by mirroring the coordinates in the shader b
 
 Colouring the triangle was accomplished by forwarding the position vector from the vertex shader to the fragment shader, and passing the coordinates as colour values.
 
-## 3d bonus tasks
+## 3 bonus tasks
 
 1. *Using gl_FragCoord to create checkerboard*
 2. *Draw a circle*
@@ -102,3 +102,9 @@ void main()
 ```
 
 ![Manually rasterised triangle](./images/manually_rasterised.png)
+
+6. Implemented a simple parser for the `obj` file format, loading the data into an `obj_parser::ObjBuilder`. In order to draw the model with the current logic in `main`, we added the `generate_simple_buffers` function to discard all extra information and return only vertices and indices. Following is a simple model created in Blender, and the resulting frame.
+
+![Model as seen in Blender workspace](./images/sample_blender.png)
+
+![Rendered 3D model, loaded from obj file](./images/loaded_object.png)
