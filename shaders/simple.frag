@@ -26,7 +26,7 @@ void main()
         float epsilon = 1.0;
 
         if (abs(delta) < epsilon) {
-            color = vec4(c, 1.0);
+            color = vec4(c, 1.0-abs(delta));
             return;
         }
     }
