@@ -168,6 +168,14 @@ fn main() {
             mkvao(&vbuf, &ibuf)
         };
 
+        // == // Testing model loading from obj file
+        let (verts, n_elements) = unsafe {
+            let (vbuf, ibuf) = obj_parser::ObjBuilder::new()
+                .load_file("./models/sample.obj")
+                .generate_simple_buffers();
+            (mkvao(&vbuf, &ibuf), ibuf.len())
+        };
+
         // Basic usage of shader helper:
         // The example code below returns a shader object, which contains the field `.program_id`.
         // The snippet is not enough to do the assignment, and will need to be modified (outside of
@@ -229,7 +237,7 @@ fn main() {
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
                 // Issue the necessary commands to draw your scene here
-                gl::DrawElements(gl::TRIANGLES, 3, gl::UNSIGNED_INT, std::ptr::null());
+                gl::DrawElements(gl::TRIANGLES, n_elements as i32, gl::UNSIGNED_INT, std::ptr::null());
 
 
 
