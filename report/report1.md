@@ -37,11 +37,12 @@ links-as-notes: true
 1. *Why does the depth buffer need to be reset each frame?*
     - The depth buffer is used in the depth test by starting far out and updating with the closest fragment to the camera at any point. This means the buffer must be reset to a high value for each frame in order to work.
 2. *In which situation can the fragment shader be executed multiple times for the same pixel?*
-    - ??
+    - Multisampling
+    - Overlapping triangles; depth test after FS (https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview)
 3. *What are the two most commonly used types of shaders? What are the responsibilities of each of them?*
     - The two most commonly used types of shaders are vertex and fragment shaders.
     - The vertex shader transforms the model from the model coordinate system into positions for drawing on the screen.
-    - The fragment shader runs once per fragment, i.e. pixel, in order to set its colour.
+    - The fragment shader runs once per fragment, i.e. approximately once per pixel, in order to set its colour.
 4. *Why is it common to use an index buffer to specify which vertices should be connected into triangles, as opposed to relying on the order in which vertices are specified into this function?*
     - Using an index buffer to select vertices from the vertex buffer can save a lot of memory, as most vertices in a model appear in multiple triangles. Even in a simple cube, one vertex can be a part of up to six triangles.
 5. *While the last input of `gl::VertexAttribPointer()` is a pointer, usually a null pointer is passed in. Describe a situation in which you would pass a non-zero value into this function.*
