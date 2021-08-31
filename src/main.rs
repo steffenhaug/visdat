@@ -5,6 +5,7 @@ use std::sync::{Mutex, Arc, RwLock};
 
 mod shader;
 mod util;
+mod obj_parser;
 
 use glutin::event::{
     Event,
