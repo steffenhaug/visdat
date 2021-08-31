@@ -115,6 +115,7 @@ impl ObjBuilder {
                     () // TODO: implement
                 }
                 "f" => { /* Polygonal face element: v_index/t_index/n_index */
+                    // TODO: Triangulate polygons
                     let mut f = Face::new();
                     for pt in line_iter.take_while(|&s| !s.starts_with("#")) {
                         /* Index starts at 1, use 0 for 'unused' */
@@ -133,10 +134,11 @@ impl ObjBuilder {
         }
         self
     }
-    pub fn generate_buffers(self) -> (u32, u32, u32) {
-        let (vao, vbo, ibo) = (0, 0, 0);
-
-        (vao, vbo, ibo)
+    pub fn generate_simple_buffers(self) -> (Vec::<f32>, Vec::<u32>) {
+        (
+            self.vertices.iter().flat_map(|vert| vec![vert.x, vert.y, vert.z]).collect::<_>(),
+            self.faces.iter().flat_map(|face| face.iter().map(|(v,_t,_n)| v-1).collect::<Vec<u32>>()).collect::<_>()
+        )
     }
 }
 
