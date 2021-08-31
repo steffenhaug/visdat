@@ -184,6 +184,7 @@ fn main() {
         //     shader::ShaderBuilder::new()
         //        .attach_file("./path/to/shader.file")
         //        .link();
+        let mut u_rotate = 0;
         unsafe {
             let sh = shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.vert")
@@ -194,7 +195,31 @@ fn main() {
 
             // should be ok to drop shader. code is already uploaded
             // and active.
+
+            // Uniforms for 3D model
+            let u_perspective = sh.get_uniform_location("perspective");
+            let perspective = util::matrix::perspective(SCREEN_H as f32, SCREEN_W as f32); // TODO: get h/w
+            gl::UniformMatrix4fv(u_perspective, 1, gl::FALSE, pointer_to_array(&perspective) as *const _);
+            
+            let u_view = sh.get_uniform_location("view");
+            let view = util::matrix::view(&[0.5, 0.2, -3.0], &[-0.5, -0.2, 3.0], &[0.0, 1.0, 0.0]);
+            gl::UniformMatrix4fv(u_view, 1, gl::FALSE, pointer_to_array(&view) as *const _);
+            
+            u_rotate = sh.get_uniform_location("rotate");
+            let rotate = util::matrix::rotate(0.0, util::matrix::Axis::X);
+            gl::UniformMatrix4fv(u_rotate, 1, gl::FALSE, pointer_to_array(&rotate) as *const _);
+
+            let u_model = sh.get_uniform_location("model");
+            let model = [
+                [ 0.5, 0.0, 0.0, 0.0],
+                [ 0.0, 0.5, 0.0, 0.0],
+                [ 0.0, 0.0, 0.5, 0.0],
+                [ 0.0, 0.0, 0.0, 1.0f32],
+            ];
+            gl::UniformMatrix4fv(u_model, 1, gl::FALSE, pointer_to_array(&model) as *const _);
+                
         }
+
 
         // Used to demonstrate keyboard handling -- feel free to remove
         let mut _arbitrary_number = 0.0;
