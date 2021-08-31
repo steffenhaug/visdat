@@ -18,7 +18,7 @@ use glutin::event::{
 use glutin::event_loop::ControlFlow;
 
 const SCREEN_W: u32 = 800;
-const SCREEN_H: u32 = 600;
+const SCREEN_H: u32 = 800;
 
 // Helper functions to make interacting with OpenGL a little bit 
 // prettier. You *WILL* need these! The names should be pretty self 
