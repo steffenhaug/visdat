@@ -159,28 +159,28 @@ fn main() {
         // == // Set up your VAO here
         let verts = unsafe {
             let vbuf = vec![
-                -1.0, -1.0, 0.0,
-                -1.0,  1.0, 0.0,
-                 1.0,  1.0, 0.0,
+                -0.6, -0.6, 0.0,
+                 0.0,  0.6, 0.0,
+                 0.6, -0.6, 0.0,
                  1.0, -1.0, 0.0
             ];
 
             let ibuf = vec![ 
-                2, 0, 3,
                 0, 2, 1,
                 ];
 
             /* drops the buffers, but data should already be in vram i think */
             mkvao(&vbuf, &ibuf)
         };
+        let n_elements = 3;
 
         // == // Testing model loading from obj file
-        let (verts, n_elements) = unsafe {
-            let (vbuf, ibuf) = obj_parser::ObjBuilder::new()
-                .load_file("./models/sample.obj")
-                .generate_simple_buffers();
-            (mkvao(&vbuf, &ibuf), ibuf.len())
-        };
+        // let (verts, n_elements) = unsafe {
+        //     let (vbuf, ibuf) = obj_parser::ObjBuilder::new()
+        //         .load_file("./models/sample.obj")
+        //         .generate_simple_buffers();
+        //     (mkvao(&vbuf, &ibuf), ibuf.len())
+        // };
 
         // Basic usage of shader helper:
         // The example code below returns a shader object, which contains the field `.program_id`.
