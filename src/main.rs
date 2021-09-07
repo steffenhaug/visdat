@@ -171,7 +171,8 @@ fn main() {
         };
         let n_elements = 3;
 
-        // == // Testing model loading from obj file
+        // == // Testing model loading from obj file. Uncomment to shaddow
+        //       variables and render 3D model.
         // let (verts, n_elements) = unsafe {
         //     let (vbuf, ibuf) = obj_parser::ObjBuilder::new()
         //         .load_file("./models/sample.obj")
@@ -230,8 +231,6 @@ fn main() {
             // Handle mouse movement. delta contains the x and y movement of the mouse since last frame in pixels
             if let Ok(mut delta) = mouse_delta.lock() {
 
-
-
                 *delta = (0.0, 0.0);
             }
 
@@ -241,9 +240,6 @@ fn main() {
 
                 // Issue the necessary commands to draw your scene here
                 gl::DrawElements(gl::TRIANGLES, n_elements as i32, gl::UNSIGNED_INT, std::ptr::null());
-
-
-
 
             }
 

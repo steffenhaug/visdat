@@ -56,6 +56,9 @@ impl ObjBuilder {
     pub fn new() -> Self {
         ObjBuilder { .. Default::default() }
     }
+    /// Load and parse an obj file.
+    /// Currently at a minimum viable product for loading
+    /// and rendering a model.
     pub fn load_file<P: AsRef<Path>>(mut self, obj_path: P) -> Self {
         let buf = std::fs::read_to_string(obj_path).unwrap();
         for line in buf.lines() {
@@ -115,7 +118,7 @@ impl ObjBuilder {
                     () // TODO: implement
                 }
                 "f" => { /* Polygonal face element: v_index/t_index/n_index */
-                    // TODO: Triangulate polygons
+                    // TODO: Triangulate polygons. Polygons with more than three vertices will currently be rendered wrong
                     let mut f = Face::new();
                     for pt in line_iter.take_while(|&s| !s.starts_with("#")) {
                         /* Index starts at 1, use 0 for 'unused' */
@@ -134,6 +137,8 @@ impl ObjBuilder {
         }
         self
     }
+    /// Drops information that is not handled in the current main file, 
+    /// returning a vertex list and an index list describing the faces.
     pub fn generate_simple_buffers(self) -> (Vec::<f32>, Vec::<u32>) {
         (
             self.vertices.iter().flat_map(|vert| vec![vert.x, vert.y, vert.z]).collect::<_>(),
