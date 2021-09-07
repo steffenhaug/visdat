@@ -20,7 +20,7 @@ links-as-notes: true
 
 ## 1c
 
-![5 distinct triangles](./images/file)
+![5 distinct triangles](./images/5-tris.png)
 
 ## (2a) Clipping
 
@@ -104,7 +104,5 @@ void main()
 ![Manually rasterised triangle](./images/manually_rasterised.png)
 
 6. Implemented a simple parser for the `obj` file format, loading the data into an `obj_parser::ObjBuilder`. In order to draw the model with the current logic in `main`, we added the `generate_simple_buffers` function to discard all extra information and return only vertices and indices. Following is a simple model created in Blender, and the resulting frame.
-
-![Model as seen in Blender workspace](./images/sample_blender.png)
 
 ![Rendered 3D model, loaded from obj file](./images/loaded_object.png)
