@@ -1,0 +1,35 @@
+1.b. there are three triangles here, as you can see from the blue shade in the center is its
+     own vertex. the triangles are adjacent to save typing a lot of verts
+
+2.a. crucial that the triangles are drawn back to front
+
+2.b. "back triangles" drawn too late will simply not be blended in at all because they fail
+     the depth test
+
+3.b. link vid i guess
+     changing b and d (off-diagonal) causes sheering
+
+     changing a and e (on-diagonal) causes scaling along the given axes
+
+     changing c and f appears to move side to side, but gets extremely
+     stretched out towards the edge of the screen (kinda fisheye lens effect)
+
+     this distortion made me curious so i computed the determinant of the matrix,
+     and it is
+        -bd + ea
+     and the fact that c and f does not appear in the determinant proves that
+     these could have no effect on the area of any triangle, and that the distortion
+     effect is simply an optical illusion
+
+
+3.c. the boring answer is that this is simply not the form of a rotation matrix
+     most of the time, and we know this from the theory in the course.
+    
+     some of the effects we can create with this matrix LOOK LIKE rotations,
+     but are simply an optical illusion
+
+     it is actually possible to make a rotation matrix around the Z-axis by letting
+         a = cos t, b = -sin t, c = 0, d = sin t, e = cos t, f = 0
+     then we will see the scene spin
+
+     but by changing individual values we will never make a rotation matrix
